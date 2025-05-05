@@ -1,0 +1,51 @@
+version: "3"
+
+services:
+
+    dbt:
+        build: ./dbt
+        volumes:
+        - ./dbt:/dbt
+        environment:
+        - SNOWFLAKE_ACCOUNT=${SNOWFLAKE_ACCOUNT}
+        - SNOWFLAKE_USER=${SNOWFLAKE_USER}
+        - SNOWFLAKE_PASSWORD=${SNOWFLAKE_PASSWORD}
+        - SNOWFLAKE_DATABASE=${SNOWFLAKE_DATABASE}
+        - SNOWFLAKE_SCHEMA=${SNOWFLAKE_SCHEMA}
+        - SNOWFLAKE_WAREHOUSE=${SNOWFLAKE_WAREHOUSE}
+        - SNOWFLAKE_ROLE=${SNOWFLAKE_ROLE}
+
+    dagster-daemon:
+        build: ./dagster
+        command: dagster-daemon run
+        volumes:
+        - ./dagster:/opt/dagster/app
+        environment:
+        - DAGSTER_HOME=/opt/dagster/app
+        - SNOWFLAKE_ACCOUNT=${SNOWFLAKE_ACCOUNT}
+        - SNOWFLAKE_USER=${SNOWFLAKE_USER}
+        - SNOWFLAKE_PASSWORD=${SNOWFLAKE_PASSWORD}
+        - SNOWFLAKE_DATABASE=${SNOWFLAKE_DATABASE}
+        - SNOWFLAKE_SCHEMA=${SNOWFLAKE_SCHEMA}
+        - SNOWFLAKE_WAREHOUSE=${SNOWFLAKE_WAREHOUSE}
+        - SNOWFLAKE_ROLE=${SNOWFLAKE_ROLE}
+
+    dagster-dagit:
+        build: ./dagster
+        ports:
+        - "3000:3000"
+        volumes:
+        - ./dagster:/opt/dagster/app
+        environment:
+        - DAGSTER_HOME=/opt/dagster/app
+        - SNOWFLAKE_ACCOUNT=${SNOWFLAKE_ACCOUNT}
+        - SNOWFLAKE_USER=${SNOWFLAKE_USER}
+        - SNOWFLAKE_PASSWORD=${SNOWFLAKE_PASSWORD}
+        - SNOWFLAKE_DATABASE=${SNOWFLAKE_DATABASE}
+        - SNOWFLAKE_SCHEMA=${SNOWFLAKE_SCHEMA}
+        - SNOWFLAKE_WAREHOUSE=${SNOWFLAKE_WAREHOUSE}
+        - SNOWFLAKE_ROLE=${SNOWFLAKE_ROLE}
+        depends_on:
+        - dagster-daemon
+
+        
